@@ -322,6 +322,7 @@ flowchart TD
 - Las contraseñas se encriptan de forma irreversible usando **bcrypt**.
 - La comunicación y persistencia de sesión es _stateless_ a través de **JWT**.
 - Los datos sensibles (como passwords) son omitidos intencionalmente en las respuestas HTTP.
+- **Historial Limpio**: Se realizó una purga total del historial de Git (`History Purge`) para eliminar cualquier rastro de credenciales previas, asegurando un repositorio libre de secretos.
 
 ---
 
