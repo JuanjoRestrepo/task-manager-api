@@ -17,15 +17,15 @@
 
 ## Tech Stack
 
-| Tecnología     | Rol en el Proyecto                       |
-| :------------- | :--------------------------------------- |
-| **Node.js**    | Entorno de ejecución                     |
-| **Express**    | Framework web para la API                |
-| **TypeScript** | Lenguaje para tipado estático y robustez |
-| **Prisma ORM** | Mapeo de base de datos y consultas       |
+| Tecnología     | Rol en el Proyecto                         |
+| :------------- | :----------------------------------------- |
+| **Node.js**    | Entorno de ejecución                       |
+| **Express**    | Framework web para la API                  |
+| **TypeScript** | Lenguaje para tipado estático y robustez   |
+| **Prisma ORM** | Mapeo de base de datos y consultas         |
 | **PostgreSQL** | Base de datos relacional (Neon Serverless) |
-| **JWT**        | Autenticación basada en tokens           |
-| **Swagger**    | Documentación bajo estándar OpenAPI      |
+| **JWT**        | Autenticación basada en tokens             |
+| **Swagger**    | Documentación bajo estándar OpenAPI        |
 
 ---
 
@@ -184,21 +184,22 @@ Sigue estos pasos para correr el proyecto localmente:
 3. **Configurar el entorno:**
    Crea un archivo `.env` en la raíz del proyecto con la siguiente estructura:
 
-    ```env
-    PORT=3000
-    # URL para desarrollo local (Docker)
-    DATABASE_URL="postgresql://postgres:postgres@localhost:5432/tasks_db?sslmode=disable"
-    DIRECT_URL="postgresql://postgres:postgres@localhost:5432/tasks_db?sslmode=disable"
-    
-    # NOTA: Si usas Neon, usa las URLs de tu Dashboard (con ?pgbouncer=true en DATABASE_URL)
-    
-    JWT_SECRET=supersecret
-    BASE_URL=http://localhost:3000
-    NODE_ENV=development
-    LOG_PRETTY=true
-    ```
-    Valores válidos para `NODE_ENV`: `development`, `test`, `production`.
-    `LOG_PRETTY` es opcional (solo dev). Usa `false` para desactivar logs bonitos.
+   ```env
+   PORT=3000
+   # URL para desarrollo local (Docker)
+   DATABASE_URL="postgresql://postgres:postgres@localhost:5432/tasks_db?sslmode=disable"
+   DIRECT_URL="postgresql://postgres:postgres@localhost:5432/tasks_db?sslmode=disable"
+
+   # NOTA: Si usas Neon, usa las URLs de tu Dashboard (con ?pgbouncer=true en DATABASE_URL)
+
+   JWT_SECRET=supersecret
+   BASE_URL=http://localhost:3000
+   NODE_ENV=development
+   LOG_PRETTY=true
+   ```
+
+   Valores válidos para `NODE_ENV`: `development`, `test`, `production`.
+   `LOG_PRETTY` es opcional (solo dev). Usa `false` para desactivar logs bonitos.
 
 4. **Levantar base de datos (Docker):**
 
@@ -244,6 +245,31 @@ La aplicación se encuentra desplegada en **Render** utilizando la siguiente inf
 - **Web Service:** Para la aplicación Node.js (Render).
 - **PostgreSQL:** Base de datos gestionada en **Neon (Serverless)** para mayor escalabilidad y persistencia.
 
+```mermaid
+graph LR
+  subgraph Client_Side [User]
+    A[Browser / Mobile]
+  end
+
+  subgraph Cloud_Infrastructure [Cloud Deployment]
+    subgraph Render_Cloud [Render]
+      B[Express API]
+      C[Prisma Client]
+    end
+
+    subgraph Neon_Cloud [Neon Serverless]
+      D{Connection Pooler}
+      E[(PostgreSQL DB)]
+    end
+  end
+
+  A -- HTTP/REST --> B
+  B --> C
+  C -- DATABASE_URL --> D
+  D --> E
+  C -- DIRECT_URL --> E
+```
+
 Variables de entorno configuradas en producción: `DATABASE_URL`, `JWT_SECRET`, `BASE_URL`, `NODE_ENV`.
 Recomendado en Render: `NODE_ENV=production`.
 
@@ -266,8 +292,8 @@ Para garantizar la estabilidad en un entorno Serverless con Neon, el proyecto ut
 
 1.  **Pooled Connection (`DATABASE_URL`)**: Utiliza el pooler de Neon (`pgbouncer=true`). Es el que usa la aplicación en tiempo de ejecución para manejar múltiples conexiones concurrentes de forma eficiente.
 2.  **Direct Connection (`DIRECT_URL`)**: Una conexión directa a la base de datos sin pasar por el pooler. Se utiliza exclusivamente para:
-    *   Ejecutar migraciones de Prisma (`prisma migrate`).
-    *   Realizar copias de seguridad (Backups) mediante `pg_dump`.
+    - Ejecutar migraciones de Prisma (`prisma migrate`).
+    - Realizar copias de seguridad (Backups) mediante `pg_dump`.
 
 Esta configuración está centralizada en `prisma.config.ts` (Prisma 7+).
 
@@ -322,7 +348,6 @@ flowchart TD
 - Las contraseñas se encriptan de forma irreversible usando **bcrypt**.
 - La comunicación y persistencia de sesión es _stateless_ a través de **JWT**.
 - Los datos sensibles (como passwords) son omitidos intencionalmente en las respuestas HTTP.
-- **Historial Limpio**: Se realizó una purga total del historial de Git (`History Purge`) para eliminar cualquier rastro de credenciales previas, asegurando un repositorio libre de secretos.
 
 ---
 
