@@ -329,16 +329,16 @@ Adicionalmente, se utilizan middlewares para resolver tareas transversales como 
 
 ```mermaid
 flowchart TD
-  A[Client / API Consumer] --> B[Express Routes]
-  B --> C[Controllers]
-  C --> D[Services (Business Logic)]
-  D --> E[Repositories (Data Access)]
-  E --> F[Prisma ORM]
-  F --> G[(PostgreSQL)]
+  A["Client / API Consumer"] --> B["Express Routes"]
+  B --> C["Controllers"]
+  C --> D["Services (Business Logic)"]
+  D --> E["Repositories (Data Access)"]
+  E --> F["Prisma ORM"]
+  F --> G[("PostgreSQL")]
 
-  X[Auth Middleware (JWT)] --- B
-  Y[Validation Middleware (AJV)] --- B
-  Z[Error Middleware (AppError)] --- B
+  X["Auth Middleware (JWT)"] --- B
+  Y["Validation Middleware (AJV)"] --- B
+  Z["Error Middleware (AppError)"] --- B
 ```
 
 ---
