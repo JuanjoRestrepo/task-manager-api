@@ -1,5 +1,6 @@
 import express from 'express';
 import helmet from 'helmet';
+import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 
@@ -20,6 +21,7 @@ app.set('trust proxy', 1);
 // Logging & Security
 app.use(httpLogger);
 app.use(helmet());
+app.use(cors());
 app.use(express.json());
 
 // 2. HEALTH CHECKS EXEMPT FROM RATE LIMITING
