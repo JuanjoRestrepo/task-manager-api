@@ -13,27 +13,37 @@ import { swaggerSpec } from './config/swagger';
 
 const app = express();
 
-// Logging
+// 1. TRUST REVERSE PROXY (REQUIRED FOR RENDER)
+// This ensures rate limits apply to the actual client IP, not Render's Load Balancer IP
+app.set('trust proxy', 1);
+
+// Logging & Security
 app.use(httpLogger);
-
-// Security
 app.use(helmet());
+app.use(express.json());
 
-// Rate limit global
+// 2. HEALTH CHECKS EXEMPT FROM RATE LIMITING
+// Define these BEFORE the rate limiter so Render pings don't trigger a 429
+app.get('/', (_req, res) => {
+  res.json({ status: 'ok' });
+});
+
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok' });
+});
+
+// 3. GLOBAL RATE LIMITING
 app.use(
   rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
     message: {
       message: 'Too many requests, please try again later.',
     },
   }),
 );
 
-// Body parser
-app.use(express.json());
-
-// Rate limit login (más restrictivo)
+// Rate limit login (more restrictive)
 app.use(
   '/auth/login',
   rateLimit({
@@ -53,16 +63,7 @@ app.use('/tasks', taskRoutes);
 // Swagger
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Health check
-app.get('/', (_req, res) => {
-  res.json({ status: 'ok' });
-});
-
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok' });
-});
-
-// Error handler (SIEMPRE AL FINAL)
+// Error handler (ALWAYS AT THE END)
 app.use(errorHandler);
 
 export default app;

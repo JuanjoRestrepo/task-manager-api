@@ -271,15 +271,33 @@ See `references/github-actions.md` for the production-ready workflow template.
 Apply these regardless of task type.
 
 ### Security
-- Never commit secrets, API keys, or credentials — use `.env` + secret managers
-- Validate env vars at startup with `@t3-oss/env-nextjs` (T3) or `pydantic-settings` (Python)
-- Add `SECURITY.md` to new projects
-- Set security headers (CSP, HSTS, X-Frame-Options) — use `helmet` for Node.js / `next-safe` for Next.js
+
+Security has two mandatory layers: infrastructure and application. Both must be addressed.
+
+**Infrastructure (always apply):**
+- Never commit secrets — use `.env` locally, secret managers in production (Doppler, AWS Secrets Manager, Infisical)
+- Validate env vars at startup: `@t3-oss/env-nextjs` (T3), `pydantic-settings` (Python)
+- Set security headers: CSP, HSTS, X-Frame-Options — `helmet` (Node.js), `next-safe` (Next.js)
+- Enforce HTTPS everywhere; redirect HTTP → HTTPS
 - Dependency scanning: `npm audit`, `pip-audit`, Dependabot / Renovate
-- Use HTTPS everywhere; enforce HTTPS redirects
-- Validate and sanitize all user input server-side — use Zod for TS, Pydantic for Python
-- Use parameterized queries / ORMs to prevent SQL injection
-- Rotate secrets regularly; never log sensitive values
+- Enable a WAF in production (Cloudflare, AWS WAF, GCP Cloud Armor)
+- Never log sensitive values; rotate secrets regularly; add `SECURITY.md` to every project
+
+**Application (always apply — full depth in `references/security.md`):**
+- Hash passwords with **Argon2id** or bcrypt (cost ≥ 12) — never MD5/SHA-1
+- Enforce password strength server-side (use `zxcvbn`)
+- Store session tokens in **httpOnly + Secure + SameSite cookies** — never `localStorage`
+- Invalidate sessions **server-side** on logout — clearing the cookie alone is insufficient
+- JWT: access token expiry ≤ 1h; refresh tokens rotated on every use with reuse detection
+- Enforce **RBAC server-side** on every sensitive route — never rely on frontend guards
+- Apply **rate limiting** on all API endpoints and WebSocket connections; stricter limits on auth routes
+- Use **IP whitelisting** for admin routes; Redis-backed dynamic IP banning for abuse
+- Validate and sanitize all input server-side — Zod (TS), Pydantic (Python)
+- Use parameterized queries / ORMs — never interpolate raw SQL strings
+- Return **generic error messages** to clients — never expose stack traces, ORM errors, or internal paths
+- Implement a **backup strategy** (3-2-1 rule); encrypt backups; test restores on a schedule
+
+→ See `references/security.md` for full implementations, code patterns, and the pre-launch security checklist.
 
 ### Testing
 - **Unit tests**: Vitest (T3/Vite-based), Jest (Node.js), pytest (Python)
@@ -343,6 +361,7 @@ Always explain *why* a choice was made, not just *what* to do — especially for
 
 Read these when you need templates, full examples, or deeper patterns:
 
-- `references/scaffolding.md` — Directory structures for all stacks including **T3**, Next.js, Express, FastAPI, MERN; essential config file templates
+- `references/security.md` — full application security: password hashing, JWT/refresh tokens, httpOnly cookies, session management, RBAC patterns, rate limiting (HTTP + WebSocket), IP controls, WAF guidance, generic error handling, backup strategy, and pre-launch security checklist
+- `references/scaffolding.md` — directory structures for all stacks including T3, Next.js, Express, FastAPI, MERN; essential config file templates
 - `references/docker-kubernetes.md` — Dockerfile templates (Node.js, Python), docker-compose, Kubernetes manifests
-- `references/github-actions.md` — Full CI/CD workflow YAMLs for Node.js, Python, Docker, ECS, multi-environment deploys
+- `references/github-actions.md` — CI/CD workflow YAMLs for Node.js, Python, Docker, ECS, GitHub Releases, multi-environment deploys
