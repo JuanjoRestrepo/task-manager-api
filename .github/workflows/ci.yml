@@ -37,6 +37,7 @@ jobs:
       - name: Install dependencies
         env:
           DATABASE_URL: postgresql://postgres:password@localhost:5432/tasks_db_test
+          DIRECT_URL: postgresql://postgres:password@localhost:5432/tasks_db_test
         run: npm install
 
       - name: Generate Prisma Client
@@ -45,12 +46,14 @@ jobs:
       - name: Deploy Migrations to CI Database
         env:
           DATABASE_URL: postgresql://postgres:password@localhost:5432/tasks_db_test
+          DIRECT_URL: postgresql://postgres:password@localhost:5432/tasks_db_test
         run: npx prisma migrate deploy
 
       - name: Run Rate Limiting Tests
         env:
           NODE_ENV: test
           DATABASE_URL: postgresql://postgres:password@localhost:5432/tasks_db_test
+          DIRECT_URL: postgresql://postgres:password@localhost:5432/tasks_db_test
           JWT_SECRET: test-secret
         run: npx jest src/tests/rate-limit.test.ts
 
@@ -58,6 +61,7 @@ jobs:
         env:
           NODE_ENV: test
           DATABASE_URL: postgresql://postgres:password@localhost:5432/tasks_db_test
+          DIRECT_URL: postgresql://postgres:password@localhost:5432/tasks_db_test
           JWT_SECRET: test-secret
         run: npm test
 
