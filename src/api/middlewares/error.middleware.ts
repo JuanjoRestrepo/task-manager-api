@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import * as Sentry from '@sentry/node';
 import { AppError } from '../../utils/errors';
 
 export const errorHandler = (
@@ -9,6 +10,9 @@ export const errorHandler = (
 ) => {
   const requestId = req.id;
   const isProd = process.env.NODE_ENV === 'production';
+
+  // Reportar a Sentry manualmente para asegurar captura
+  Sentry.captureException(err);
 
   // Log estructurado
   if (req.log) {
