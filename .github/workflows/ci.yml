@@ -40,6 +40,11 @@ jobs:
       - name: Generate Prisma Client
         run: npx prisma generate
 
+      - name: Deploy Migrations to CI Database
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/tasks_db_test
+        run: npx prisma migrate deploy
+
       - name: Run Rate Limiting Tests
         env:
           NODE_ENV: test
