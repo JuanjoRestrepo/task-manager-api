@@ -10,8 +10,4 @@ router.get('/protected', authMiddleware, (req: AuthRequest, res) => {
   });
 });
 
-router.get('/error', () => {
-  throw new Error('🚀 Sentry Test Error: This is a deliberate failure for monitoring verification.');
-});
-
 export default router;
