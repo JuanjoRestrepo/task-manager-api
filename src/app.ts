@@ -1,3 +1,4 @@
+import './instrument';
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -5,9 +6,6 @@ import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 import * as Sentry from '@sentry/node';
-import { initSentry } from './config/sentry';
-
-initSentry();
 
 import authRoutes from './api/routes/auth.routes';
 import testRoutes from './api/routes/test.routes';
