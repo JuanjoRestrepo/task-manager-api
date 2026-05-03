@@ -20,6 +20,10 @@ const envSchema = z.object({
 
   JWT_SECRET: z.string().min(10),
 
+  JWT_REFRESH_SECRET: z.string().min(10).default('default_refresh_secret_must_change'),
+
+  SENTRY_DSN: z.string().url().optional(),
+
   BASE_URL: z.string().url().optional(),
 });
 

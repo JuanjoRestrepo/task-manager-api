@@ -46,4 +46,30 @@ router.post("/register", validate(registerSchema), authController.register);
  */
 router.post("/login", validate(loginSchema), authController.login);
 
+/**
+ * @swagger
+ * /auth/refresh:
+ *   post:
+ *     summary: Refresh access token
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: New JWT token
+ *       401:
+ *         description: Invalid or expired refresh token
+ */
+router.post("/refresh", authController.refresh);
+
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: Logout user and invalidate refresh token
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Logged out
+ */
+router.post("/logout", authController.logout);
+
 export default router;

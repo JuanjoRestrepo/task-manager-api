@@ -1,4 +1,5 @@
-# Task Manager API
+# Task Manager API 🚀
+![CI](https://github.com/JuanjoRestrepo/task-manager-api/actions/workflows/ci.yml/badge.svg)
 
 > **REST API** para la gestión de tareas con autenticación, construida con Node.js, Express, Prisma y PostgreSQL.
 
@@ -353,8 +354,9 @@ flowchart TD
 
 ## Improvements (Future Work)
 
-- [ ] Implementación de **Refresh Tokens**.
-- [ ] Control de acceso basado en roles (RBAC).
+- [x] Implementación de **Refresh Tokens** para mayor seguridad.
+- [x] Control de acceso basado en roles (RBAC).
 - [ ] Paginación y filtrado dinámico en endpoints de consulta.
 - [ ] Cobertura de pruebas unitarias e integración (Jest + Supertest).
-- [ ] Automatización con Pipelines de CI/CD.
+- [x] Automatización con Pipelines de CI/CD.
+- [x] Monitoreo de errores con Sentry.

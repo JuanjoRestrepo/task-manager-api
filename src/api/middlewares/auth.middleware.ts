@@ -5,10 +5,12 @@ import { env } from '../../config/env';
 
 export interface AuthRequest extends Request {
   userId?: number;
+  userRole?: string;
 }
 
 interface JwtPayload {
   userId: number;
+  role: string;
 }
 
 export const authMiddleware = (
@@ -40,6 +42,7 @@ export const authMiddleware = (
     }
 
     req.userId = decoded.userId;
+    req.userRole = decoded.role;
 
     next();
   } catch (_error) {
